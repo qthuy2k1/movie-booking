@@ -1,26 +1,19 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <navigation-header />
+  <div class="max-w-7xl mx-auto my-12">
+    <router-view />
+  </div>
+  <navigation-footer />
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
+import NavigationHeader from "./components/NavigationHeader.vue";
+import NavigationFooter from "./components/NavigationFooter.vue";
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    HelloWorld
-  }
-}
+    NavigationHeader,
+    NavigationFooter,
+  },
+};
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
