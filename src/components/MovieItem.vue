@@ -28,7 +28,7 @@ export default {
   setup() {
     const movies = ref([]);
 
-    fetch("http://localhost:3000/movies?_limit=8&_sort=id&_order=desc")
+    fetch("http://localhost:3000/Movies")
       .then((response) => response.json())
       .then((data) => {
         movies.value = data;

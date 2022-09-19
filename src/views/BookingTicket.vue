@@ -45,17 +45,54 @@
     </div>
 
     <!-- Select seat -->
-    <div class="w-3/4 mx-auto mt-24">
+    <div class="w-3/4 mx-auto mt-24 flex flex-col items-center">
       <div v-for="rowSeat in rowSeats" :key="rowSeat.id">
         <button
           v-for="seat in rowSeat.SeatNumber"
           :key="seat"
-          class="border border-red-600 w-14 ml-4 mb-2 hover:bg-red-400 hover:text-white"
-          :class="seat.Status == 'Đã chọn' ? 'bg-red-400 text-white' : null"
+          class="border border-red-600 w-9 ml-4 mb-2 hover:bg-red-400 hover:text-white"
+          :class="[
+            rowSeat.Type == 'VIP' ? 'bg-yellow-100' : null,
+            seat.Status == 'Đã đặt'
+              ? '!bg-red-600 text-white cursor-not-allowed'
+              : null,
+            seat.Status == 'Đã chọn' ? '!bg-red-400 text-white' : null,
+          ]"
           @click.prevent="seatSelect(rowSeat, seat)"
         >
           {{ rowSeat.SeatName }}{{ seat.Number }}
         </button>
+      </div>
+
+      <div class="mt-12 flex">
+        <div class="flex mr-6">
+          <button
+            @click.prevent=""
+            class="border border-red-600 w-9 mr-2 h-full"
+          ></button>
+          Chưa chọn
+        </div>
+        <div class="flex mr-6">
+          <button
+            @click.prevent=""
+            class="border bg-red-400 w-9 mr-2 h-full"
+          ></button>
+          Đã chọn
+        </div>
+        <div class="flex mr-6">
+          <button
+            @click.prevent=""
+            class="border bg-red-600 w-9 mr-2 h-full"
+          ></button>
+          Đã đặt
+        </div>
+        <div class="flex mr-6">
+          <button
+            @click.prevent=""
+            class="border bg-yellow-100 w-9 mr-2 h-full"
+          ></button>
+          VIP
+        </div>
       </div>
     </div>
 
@@ -88,10 +125,10 @@
             <button
               class="bg-red-600 px-2 text-white hover:bg-red-500"
               @click.prevent="
-                if (food.Count == null || food.Count == 0) {
-                  food.Count = 0;
+                if (food.Quantiy == null || food.Quantiy == 0) {
+                  food.Quantiy = 0;
                 } else {
-                  food.Count--;
+                  food.Quantiy--;
                   order.FoodPrice -= food.Price;
                 }
               "
@@ -100,14 +137,14 @@
             </button>
             <span
               class="border border-black inline-block w-8 h-6 text-center mx-3"
-              >{{ food.Count != null ? food.Count : 0 }}</span
+              >{{ food.Quantiy != null ? food.Quantiy : 0 }}</span
             >
             <button
               class="bg-red-600 px-2 text-white hover:bg-red-500"
               @click.prevent="
-                food.Count == null || food.Count == 0
-                  ? (food.Count = 1)
-                  : food.Count++;
+                food.Quantiy == null || food.Quantiy == 0
+                  ? (food.Quantiy = 1)
+                  : food.Quantiy++;
                 order.FoodPrice += food.Price;
               "
             >
@@ -192,7 +229,7 @@ export default {
       ShowTimes: [],
     });
 
-    const foods = reactive([]);
+    const foods = ref([]);
 
     const order = reactive({
       CinemaName: "",
@@ -207,31 +244,20 @@ export default {
     });
 
     // Fetch Movie by id
-    fetch(`http://localhost:3000/movies/${route.params.id}`)
+    fetch(`http://localhost:3000/Movies/${route.params.id}`)
       .then((response) => response.json())
       .then((data) => {
         movieDetail.value = data;
+        cinemas.value = data.Cinema;
+        rowSeats.value = data.Cinema[0].ShowTimes[0].SeatsList;
         order.Title = movieDetail.value.Title;
         order.Poster = movieDetail.value.Poster;
       });
-    // Fetch Cinema
-    fetch("http://localhost:3000/cinema")
-      .then((response) => response.json())
-      .then((data) => {
-        rowSeats.value = data[0].SeatsList;
-        cinemas.value = data;
-      });
-    // Fetch Foods
-    fetch("http://localhost:3000/foods")
-      .then((response) => response.json())
-      .then((data) => {
-        Object.assign(foods, data);
-        foods.forEach((food) => {
-          Object.assign(food, { Count: 0 });
-        });
-      });
 
     function cinemaSelect(cinema) {
+      // Clear seat selected
+      order.SeatsList = [];
+
       cinemaSelected.Name = cinema.Name;
       cinemaSelected.isSelected = true;
       cinemaSelected.ShowTimes = cinema.ShowTimes;
@@ -245,17 +271,39 @@ export default {
           rowSeats.value = cinema.SeatsList;
         }
       });
+
       order.CinemaName = cinemaSelected.Name;
+
+      // Get foods are sold in cinema
+      foods.value = movieDetail.value.Cinema.find(
+        (c) => c.Name == order.CinemaName
+      ).Foods;
+
+      // Add number of quantity to foods
+      foods.value.forEach((food) => {
+        Object.assign(food, { Quantiy: 0 });
+      });
     }
 
     function dateSelect(showTimes) {
+      // Clear seat selected
+      order.SeatsList = [];
+
       order.Date = showTimes.Date;
       order.Time = showTimes.Time;
+
+      rowSeats.value = movieDetail.value.Cinema.find(
+        (c) => c.Name == order.CinemaName
+      ).ShowTimes.find(
+        (t) => t.Date == order.Date && t.Time == order.Time
+      ).SeatsList;
     }
 
     function seatSelect(rowSeat, seat) {
       if (cinemaSelected.Name != "") {
-        if (seat.Status == "Chưa chọn") {
+        if (seat.Status == "Đã đặt") {
+          return;
+        } else if (seat.Status == "Chưa chọn") {
           seat.Status = "Đã chọn";
           order.SeatsList.push({
             SeatName: rowSeat.SeatName,
