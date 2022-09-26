@@ -286,8 +286,9 @@ export default {
     }
 
     function dateSelect(showTimes) {
-      // Clear seat selected
+      // Clear seat selected in reciept
       order.SeatsList = [];
+      order.MoviePrice = 0;
 
       order.Date = showTimes.Date;
       order.Time = showTimes.Time;
@@ -297,6 +298,13 @@ export default {
       ).ShowTimes.find(
         (t) => t.Date == order.Date && t.Time == order.Time
       ).SeatsList;
+
+      // clear seat selected in select
+      rowSeats.value.forEach((rowSeat) => {
+        rowSeat.SeatNumber.forEach((seat) => {
+          seat.Status == "Đã chọn" ? (seat.Status = "Chưa chọn") : null;
+        });
+      });
     }
 
     function seatSelect(rowSeat, seat) {
