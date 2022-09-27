@@ -38,6 +38,18 @@ const routes = [
         /* webpackChunkName: "BookingTicket" */ "../views/BookingTicket.vue"
       ),
   },
+  {
+    path: "/sign-in",
+    name: "SignIn",
+    component: () =>
+      import(/* webpackChunkName: "SignIn" */ "../views/SignIn.vue"),
+  },
+  {
+    path: "/sign-up",
+    name: "SignUp",
+    component: () =>
+      import(/* webpackChunkName: "SignUp" */ "../views/SignUp.vue"),
+  },
 ];
 
 const router = createRouter({

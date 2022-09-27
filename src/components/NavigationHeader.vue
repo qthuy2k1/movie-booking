@@ -28,14 +28,16 @@
           <input
             type="text"
             class="w-56 h-10 rounded-lg pl-4 pr-9"
-            placeholder="Type here to search..."
+            placeholder="Nhập để tìm kiếm..."
           />
           <span class="absolute right-2 top-1/2 -translate-y-1/2"
             ><i class="fa-solid fa-magnifying-glass text-xl"></i
           ></span>
         </div>
         <span class="text-white h-full relative py-2">
-          <a href="" class="hover:text-red-400">Đăng nhập </a>
+          <router-link to="/sign-in" class="hover:text-red-400"
+            >Đăng nhập
+          </router-link>
         </span>
       </div>
     </nav>
