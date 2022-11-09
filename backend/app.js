@@ -2,9 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 const moviesRouter = require("./app/routes/movies.route");
-const userRouter = require("./app/routes/user.route");
+const ordersRouter = require("./app/routes/orders.router");
 const ApiError = require("./app/api-error");
-const bodyParser = require("body-parser");
 
 const app = express();
 
@@ -15,9 +14,7 @@ app.use(express.json());
 
 // routes
 app.use("/api/movies", moviesRouter);
-app.use("/api/user", userRouter);
-require("./app/routes/auth.route")(app);
-require("./app/routes/user.route")(app);
+app.use("/api/orders", ordersRouter);
 app.get("/", (req, res) => {
     return res.status(200).json({ message: "Server is OK" });
 });

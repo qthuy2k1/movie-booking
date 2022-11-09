@@ -1,7 +1,4 @@
 const Movies = require("../models/movies.model");
-const Cinema = require("../models/cinema.model");
-const Foods = require("../models/foods.model");
-const ShowTimes = require("../models/showtimes.model");
 
 exports.create = async (req, res) => {
     const newMovie = new Movies(req.body);
@@ -10,12 +7,18 @@ exports.create = async (req, res) => {
 };
 
 exports.findAll = async (req, res) => {
-    const movies = await Movies.find({});
+    const movies = await Movies.find({}).populate({
+        path: "Cinema",
+        populate: { path: "Foods" },
+    });
     return res.status(200).json(movies);
 };
 
 exports.findOne = async (req, res) => {
-    const movie = await Movies.findById(req.params.id);
+    const movie = await Movies.findById(req.params.id).populate({
+        path: "Cinema",
+        populate: { path: "Foods" },
+    });
     return res.status(200).json(movie);
 };
 
