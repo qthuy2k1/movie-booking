@@ -38,7 +38,6 @@
             @click="
               this.$router.push({
                 name: 'BookingTicket',
-                params: { title: movieDetail.Title },
               })
             "
           >

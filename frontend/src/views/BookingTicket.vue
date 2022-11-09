@@ -158,15 +158,13 @@
     <!-- Receipt -->
     <div class="mt-12 bg-black p-4 w-full">
       <div class="flex">
-        <img :src="order.Poster" alt="" class="w-52 mr-12" />
+        <img :src="movieDetail.Poster" alt="" class="w-52 mr-12" />
         <div class="text-white">
           <h3 class="font-bold text-2xl mb-4">{{ order.Title }}</h3>
           <p>
             <strong>Chỗ Ngồi: </strong>
-            <span
-              v-for="seat in order.SeatsList"
-              :key="seat.SeatName + seat.SeatNumber"
-              >{{ seat.SeatName }}{{ seat.SeatNumber }},
+            <span v-for="seat in order.SeatsList" :key="seat"
+              >{{ seat }},
             </span>
           </p>
           <p><strong>Phòng chiếu: </strong>{{ order.CinemaName }}</p>
@@ -198,14 +196,32 @@
               }).format((order.TotalPrice = order.FoodPrice + order.MoviePrice))
             }}
           </p>
+
+          <form class="pay-form">
+            <strong>Chọn phương thức thanh toán: </strong>
+            <label class="pl-5 pr-2" for="atm">Thanh toán bằng ATM</label>
+            <input type="radio" value="atm" id="atm" name="pay" />
+            <label class="pl-5 pr-2" for="momo">Thanh toán bằng MOMO</label>
+            <input type="radio" value="MOMO" id="momo" name="pay" />
+            <label class="pl-5 pr-2" for="cash">Thanh toán tại quầy</label>
+            <input type="radio" value="cash" id="cash" name="pay" checked />
+          </form>
         </div>
       </div>
       <div class="flex justify-end w-full">
         <button
-          @click.prevent=""
+          v-if="!isPending"
+          @click.prevent="createOrder()"
           class="bg-blue-600 rounded-md text-white font-bold px-10 py-3 text-lg hover:bg-blue-500"
         >
           Xác nhận
+        </button>
+        <button
+          class="bg-gray-800 text-white px-4 py-2 rounded-lg mt-4 cursor-not-allowed"
+          v-else
+          disabled
+        >
+          Đang đặt vé...
         </button>
       </div>
     </div>
@@ -214,11 +230,19 @@
 
 <script>
 import { reactive, ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+import { useUser } from "@/composables/useUser";
 export default {
   name: "BookingTicket",
   setup() {
     const route = useRoute();
+    const router = useRouter();
+
+    const isPending = ref(false);
+
+    const { getUser } = useUser();
+
+    const { user } = getUser();
 
     const movieDetail = ref({});
     const rowSeats = ref([]);
@@ -237,10 +261,10 @@ export default {
       Time: "",
       SeatsList: [],
       Title: "",
-      Poster: "",
       MoviePrice: 0,
       FoodPrice: 0,
       TotalPrice: 0,
+      UserID: user.value.uid,
     });
 
     // Fetch Movie by id
@@ -248,30 +272,23 @@ export default {
       .then((response) => response.json())
       .then((data) => {
         movieDetail.value = data;
+        console.log(data.Cinema);
 
-        data.Cinema.forEach((cinemaID) => {
-          fetch(`http://localhost:3000/api/movies/cinema/${cinemaID}`)
-            .then((response) => response.json())
-            .then((cinemaData) => {
-              cinemas.value.push(cinemaData);
-              rowSeats.value = cinemaData.ShowTimes[0].SeatsList;
-            });
-
-          fetch(`http://localhost:3000/api/movies/cinema/foods`)
-            .then((response) => response.json())
-            .then((foodsData) => {
-              foods.value = foodsData;
-            });
+        data.Cinema.forEach((cinema) => {
+          cinemas.value.push(cinema);
         });
+        rowSeats.value = data.Cinema[0].ShowTimes[0].SeatList;
 
         // rowSeats.value = data.Cinema[0];
         order.Title = movieDetail.value.Title;
-        order.Poster = movieDetail.value.Poster;
       });
 
     function cinemaSelect(cinema) {
       // Clear seat selected
       order.SeatsList = [];
+
+      // Clear foods value
+      foods.value = [];
 
       cinemaSelected.Name = cinema.Name;
       cinemaSelected.isSelected = true;
@@ -290,16 +307,9 @@ export default {
       order.CinemaName = cinemaSelected.Name;
 
       // Get foods are sold in cinema
-      let foodsID = cinemas.value.find((c) => c.Name == order.CinemaName).Foods;
-      console.log(foodsID);
-
-      foodsID.forEach((foodID) => {
-        fetch(`http://localhost:3000/api/movies/cinema/foods/${foodID}`)
-          .then((response) => response.json())
-          .then((foodsData) => {
-            foods.value.push(foodsData);
-          });
-      });
+      foods.value = movieDetail.value.Cinema.find(
+        (c) => c.Name == order.CinemaName
+      ).Foods;
 
       // Add number of quantity to foods
       foods.value.forEach((food) => {
@@ -335,17 +345,11 @@ export default {
           return;
         } else if (seat.Status == "Chưa chọn") {
           seat.Status = "Đã chọn";
-          order.SeatsList.push({
-            SeatName: rowSeat.SeatName,
-            SeatNumber: seat.Number,
-          });
+          order.SeatsList.push(rowSeat.SeatName + seat.Number);
           order.MoviePrice += rowSeat.Price;
         } else {
           seat.Status = "Chưa chọn";
-          order.SeatsList.pop({
-            SeatName: rowSeat.SeatName,
-            SeatNumber: seat.Number,
-          });
+          order.SeatsList.pop(rowSeat.SeatName + seat.Number);
           order.MoviePrice -= rowSeat.Price;
         }
       }
@@ -355,16 +359,56 @@ export default {
       order.TotalPrice = order.MoviePrice + order.FoodPrice;
     }
 
+    async function createOrder() {
+      if (
+        document.querySelectorAll(".pay-form input:checked")[0].value ==
+          "cash" &&
+        order.MoviePrice != 0
+      ) {
+        await fetch(`http://localhost:3000/api/orders`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            MovieTitle: order.Title,
+            CinemaName: order.CinemaName,
+            Date: order.Date,
+            Time: order.Time,
+            SeatNumber: [...order.SeatsList],
+            Price: order.TotalPrice,
+            UserID: user.value.uid,
+            Status: "Chưa thanh toán",
+          }),
+        })
+          .then((response) => response.json())
+          .then(() => {
+            isPending.value = true;
+          })
+          .then(() => {
+            let msg = "Đặt vé thành công";
+            router.push({
+              name: "UserOrders",
+              params: { msg },
+            });
+          });
+      } else {
+        alert("Chọn ghế và phương thức thanh toán là tiền mặt");
+      }
+    }
+
     return {
+      isPending,
       rowSeats,
       cinemas,
       cinemaSelected,
       order,
       foods,
+      movieDetail,
+      user,
       cinemaSelect,
       dateSelect,
       seatSelect,
       calculateTotal,
+      createOrder,
     };
   },
 };

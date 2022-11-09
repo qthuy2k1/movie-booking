@@ -4,7 +4,14 @@ import router from "./router";
 import "@/assets/css/normalize.css";
 import "@/assets/css/tailwind.css";
 import "@/assets/css/global.css";
+import { projectAuth } from "./configs/firebase";
 
-const app = createApp(App);
-app.use(router);
-app.mount("#app");
+let app;
+
+projectAuth.onAuthStateChanged(() => {
+  if (!app) {
+    app = createApp(App);
+    app.use(router);
+    app.mount("#app");
+  }
+});

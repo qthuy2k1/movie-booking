@@ -50,6 +50,21 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "SignUp" */ "../views/SignUp.vue"),
   },
+  {
+    path: "/user-profile",
+    name: "UserProfile",
+    component: () =>
+      import(
+        /* webpackChunkName: "UserDashboard" */ "../views/UserProfile.vue"
+      ),
+  },
+  {
+    path: "/user-orders",
+    name: "UserOrders",
+    component: () =>
+      import(/* webpackChunkName: "UserDashboard" */ "../views/UserOrders.vue"),
+    props: true,
+  },
 ];
 
 const router = createRouter({
