@@ -29,10 +29,13 @@ router.route("/").get(movies.findAll).post(movies.create);
 // // router.route("/cinema/showtimes/:id").get(showtimes.findOne);
 
 // router.route("/cinema/:id").get(cinema.findOne);
+
 router
     .route("/:id")
     .get(movies.findOne)
     .put(movies.update)
     .delete(movies.delete);
+
+router.route("/:id/seatlist").put(cinema.updateSeatList);
 
 module.exports = router;

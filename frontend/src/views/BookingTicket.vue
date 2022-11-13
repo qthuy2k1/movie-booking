@@ -238,6 +238,9 @@ export default {
     const route = useRoute();
     const router = useRouter();
 
+    // for updating seatlist status
+    let showtimesId = "";
+
     const isPending = ref(false);
 
     const { getUser } = useUser();
@@ -272,7 +275,6 @@ export default {
       .then((response) => response.json())
       .then((data) => {
         movieDetail.value = data;
-        console.log(data.Cinema);
 
         data.Cinema.forEach((cinema) => {
           cinemas.value.push(cinema);
@@ -290,6 +292,7 @@ export default {
       // Clear foods value
       foods.value = [];
 
+      cinemaSelected.id = cinema._id;
       cinemaSelected.Name = cinema.Name;
       cinemaSelected.isSelected = true;
       cinemaSelected.ShowTimes = cinema.ShowTimes;
@@ -331,6 +334,10 @@ export default {
           (t) => t.Date == order.Date && t.Time == order.Time
         ).SeatList;
 
+      showtimesId = cinemas.value
+        .find((c) => c.Name == order.CinemaName)
+        .ShowTimes.find((t) => t.Date == order.Date && t.Time == order.Time);
+
       // clear seat selected in select
       rowSeats.value.forEach((rowSeat) => {
         rowSeat.SeatNumber.forEach((seat) => {
@@ -365,31 +372,49 @@ export default {
           "cash" &&
         order.MoviePrice != 0
       ) {
-        await fetch(`http://localhost:3000/api/orders`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            MovieTitle: order.Title,
-            CinemaName: order.CinemaName,
-            Date: order.Date,
-            Time: order.Time,
-            SeatNumber: [...order.SeatsList],
-            Price: order.TotalPrice,
-            UserID: user.value.uid,
-            Status: "Chưa thanh toán",
-          }),
-        })
-          .then((response) => response.json())
-          .then(() => {
-            isPending.value = true;
+        try {
+          await fetch(`http://localhost:3000/api/orders`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              MovieTitle: order.Title,
+              CinemaName: order.CinemaName,
+              Date: order.Date,
+              Time: order.Time,
+              SeatNumber: [...order.SeatsList],
+              Price: order.TotalPrice,
+              UserID: user.value.uid,
+              Status: "Chưa thanh toán",
+            }),
           })
-          .then(() => {
-            let msg = "Đặt vé thành công";
-            router.push({
-              name: "UserOrders",
-              params: { msg },
+            .then((response) => response.json())
+            .then(() => {
+              isPending.value = true;
+            })
+            .then(async () => {
+              await fetch(
+                `http://localhost:3000/api/movies/${cinemaSelected.id}/seatlist`,
+                {
+                  method: "PUT",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    id: showtimesId,
+                    SeatNumber: [...order.SeatsList],
+                    Status: "Đã đặt",
+                  }),
+                }
+              )
+                .then((response) => response.json())
+                .then((data) => console.log(data));
+
+              router.push({
+                name: "UserOrders",
+                params: { msg: "Đặt vé thành công" },
+              });
             });
-          });
+        } catch (err) {
+          console.log(err);
+        }
       } else {
         alert("Chọn ghế và phương thức thanh toán là tiền mặt");
       }
