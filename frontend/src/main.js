@@ -15,3 +15,9 @@ projectAuth.onAuthStateChanged(() => {
     app.mount("#app");
   }
 });
+
+router.beforeEach((to, from, next) => {
+  // Add Dynamic Title for Pages
+  document.title = `${to.meta.title}`;
+  next();
+});

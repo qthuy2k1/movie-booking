@@ -1,4 +1,5 @@
 const Movies = require("../models/movies.model");
+const Cinema = require("../models/cinema.model");
 
 exports.create = async (req, res) => {
     const newMovie = new Movies(req.body);
