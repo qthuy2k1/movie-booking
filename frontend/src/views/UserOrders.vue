@@ -1,7 +1,7 @@
 <template>
   <div class="mt-28">
     <h1 class="font-bold text-2xl uppercase text-center">Hóa đơn của bạn</h1>
-    <span class="text-blue-400 font-semibold" v-if="msg">{{ msg }}</span>
+    <span v-if="msg">{{ msg }}</span>
     <div class="grid grid-cols-6 gap-10">
       <user-dashboard dashboard="orders" />
       <table class="col-span-5 mt-4 w-full text-left">
@@ -67,9 +67,7 @@ export default {
 
     const route = useRoute();
 
-    console.log(route.params.msg);
-
-    const msg = ref(null);
+    const msg = route.params.id;
 
     const userOrders = ref([]);
 
