@@ -10,7 +10,7 @@ const router = express.Router();
 
 router.route("/").get(movies.findAll).post(movies.create);
 
-// router.route("/cinema").get(cinema.findAll).post(cinema.create);
+router.route("/cinema").get(cinema.findAll).post(cinema.create);
 
 // router.route("/cinema/foods").get(foods.findAll).post(foods.create);
 

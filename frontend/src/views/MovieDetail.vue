@@ -58,10 +58,10 @@ export default {
   setup() {
     const movieDetail = ref({});
     const route = useRoute();
-    fetch(`http://localhost:3000/api/movies`)
+    fetch(`http://localhost:3000/api/movies/${route.params.id}`)
       .then((response) => response.json())
       .then((data) => {
-        movieDetail.value = data[0];
+        movieDetail.value = data;
       });
 
     return {

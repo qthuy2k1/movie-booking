@@ -144,6 +144,14 @@ const routes = [
       title: "Chỉnh sửa thông tin phim",
     },
   },
+  {
+    path: "/admin/movie-management/create",
+    name: "CreateMovieForm",
+    component: () => import("../views/CreateMovieForm.vue"),
+    meta: {
+      title: "Thêm phim mới",
+    },
+  },
 ];
 
 const router = createRouter({
