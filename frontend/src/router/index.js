@@ -152,6 +152,22 @@ const routes = [
       title: "Thêm phim mới",
     },
   },
+  {
+    path: "/admin/cinema-management/:id/edit",
+    name: "CinemaManagementEdit",
+    component: () => import("../views/CinemaManagementEdit.vue"),
+    meta: {
+      title: "Chỉnh sửa thông tin rạp chiếu phim",
+    },
+  },
+  {
+    path: "/admin/cinema-management/create",
+    name: "CreateCinemaForm",
+    component: () => import("../views/CreateCinemaForm.vue"),
+    meta: {
+      title: "Thêm rạp chiếu phim mới",
+    },
+  },
 ];
 
 const router = createRouter({
