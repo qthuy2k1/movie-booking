@@ -18,6 +18,18 @@ async function signUp(email, password, fullname) {
     await response.user.updateProfile({
       displayName: fullname,
     });
+
+    await fetch(`http://localhost:3000/api/roles/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        _id: response.user.uid,
+        displayName: response.user.displayName,
+        email: response.user.email,
+        role: "user",
+      }),
+    });
+
     return response;
   } catch (err) {
     console.log(err);

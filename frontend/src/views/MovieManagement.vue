@@ -1,7 +1,9 @@
 <template>
   <div class="grid grid-cols-6">
     <div class="col-span-1 bg-slate-500 text-white min-h-screen">
-      <admin-sidebar dashboard="movie" />
+      <suspense>
+        <admin-sidebar dashboard="movie" />
+      </suspense>
     </div>
     <div class="col-span-5">
       <div class="container p-10 overflow-x-hidden">
@@ -17,8 +19,9 @@
         <div class="mb-2 relative">
           <input
             class="w-1/2 h-10 border border-gray-600 rounded-md focus:outline-none px-2"
-            placeholder="Nhập để tìm kiếm"
+            placeholder="Nhập tên phim để tìm kiếm"
             type="search"
+            v-model="searchQuery"
           />
           <i
             class="fa-solid fa-magnifying-glass absolute right-1/2 top-1/2 -translate-y-1/2 pr-2"
@@ -37,7 +40,7 @@
             </thead>
             <tbody>
               <tr
-                v-for="(movie, index) in movies"
+                v-for="(movie, index) in resultQuery"
                 :key="movie._id"
                 class="bg-white border-b"
               >
@@ -63,7 +66,7 @@
                   ></router-link>
                   <a
                     class="cursor-pointer"
-                    @click.prevent="deleteMovie(movie._id, index), reload()"
+                    @click.prevent="deleteMovie(movie._id, index)"
                     ><i class="fa-solid fa-trash-can text-xl text-red-400"></i
                   ></a>
                 </td>
@@ -78,13 +81,16 @@
 
 <script>
 import AdminSidebar from "@/components/AdminSidebar.vue";
-import { ref } from "vue";
+import { nonAccentVietnamese } from "@/composables/nonAccentVietnamese";
+import { ref, computed } from "vue";
 export default {
   components: {
     AdminSidebar,
   },
   setup() {
     const movies = ref([]);
+    const searchQuery = ref(null);
+    const { toLowerCaseNonAccentVietnamese } = nonAccentVietnamese();
 
     fetch(`http://localhost:3000/api/movies`)
       .then((response) => response.json())
@@ -101,8 +107,22 @@ export default {
         });
     }
 
+    const resultQuery = computed(() => {
+      if (searchQuery.value) {
+        return movies.value.filter((movie) => {
+          return toLowerCaseNonAccentVietnamese(movie.Title).includes(
+            searchQuery.value
+          );
+        });
+      } else {
+        return movies.value;
+      }
+    });
+
     return {
       movies,
+      resultQuery,
+      searchQuery,
       deleteMovie,
     };
   },

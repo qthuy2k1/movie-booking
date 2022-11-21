@@ -7,7 +7,7 @@
     <navigation-footer />
   </div>
   <div v-else>
-    <router-view />
+    <suspense><router-view /></suspense>
   </div>
 </template>
 

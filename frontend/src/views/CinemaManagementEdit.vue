@@ -1,7 +1,9 @@
 <template>
   <div class="grid grid-cols-6">
     <div class="col-span-1 bg-slate-500 text-white h-full">
-      <admin-sidebar dashboard="cinema" />
+      <suspense>
+        <admin-sidebar dashboard="cinema" />
+      </suspense>
     </div>
     <div class="col-span-5">
       <div class="container p-10 relative">

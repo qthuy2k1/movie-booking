@@ -1,7 +1,9 @@
 <template>
   <div class="grid grid-cols-6">
     <div class="col-span-1 bg-slate-500 text-white h-screen">
-      <admin-sidebar dashboard="cinema" />
+      <suspense>
+        <admin-sidebar dashboard="cinema" />
+      </suspense>
     </div>
     <div class="col-span-5">
       <div class="container p-10 overflow-x-hidden">
@@ -19,7 +21,7 @@
         <div class="mb-2 relative">
           <input
             class="w-1/2 h-10 border border-gray-600 rounded-md focus:outline-none px-2"
-            placeholder="Nhập để tìm kiếm"
+            placeholder="Nhập tên rạp để tìm kiếm"
             type="text"
             v-model="searchQuery"
           />
@@ -40,7 +42,7 @@
             </thead>
             <tbody>
               <tr
-                v-for="(cinema, index) in cinemas"
+                v-for="(cinema, index) in resultQuery"
                 :key="cinema._id"
                 class="bg-white border-b"
               >
@@ -66,7 +68,7 @@
                   ></router-link>
                   <a
                     class="cursor-pointer"
-                    @click.prevent="deleteCinema(cinema._id, index), reload()"
+                    @click.prevent="deleteCinema(cinema._id, index)"
                     ><i class="fa-solid fa-trash-can text-xl text-red-400"></i
                   ></a>
                 </td>
@@ -81,6 +83,7 @@
 
 <script>
 import AdminSidebar from "@/components/AdminSidebar.vue";
+import { nonAccentVietnamese } from "@/composables/nonAccentVietnamese";
 import { computed, ref } from "vue";
 export default {
   components: {
@@ -89,13 +92,14 @@ export default {
   setup() {
     const cinemas = ref([]);
     const searchQuery = ref(null);
+    const { toLowerCaseNonAccentVietnamese } = nonAccentVietnamese();
 
     fetch(`http://localhost:3000/api/movies/cinema`)
       .then((response) => response.json())
       .then((data) => (cinemas.value = data));
 
     async function deleteCinema(cinemaId, index) {
-      await fetch(`http://localhost:3000/api/cinemas/${cinemaId}`, {
+      await fetch(`http://localhost:3000/api/movies/cinema/${cinemaId}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
       })
@@ -108,13 +112,12 @@ export default {
     const resultQuery = computed(() => {
       if (searchQuery.value) {
         return cinemas.value.filter((cinema) => {
-          return searchQuery.value
-            .toLowerCase()
-            .split(" ")
-            .every((v) => cinema.Name.toLowerCase().includes(v));
+          return toLowerCaseNonAccentVietnamese(cinema.Name).includes(
+            searchQuery.value
+          );
         });
       } else {
-        return cinemas;
+        return cinemas.value;
       }
     });
 

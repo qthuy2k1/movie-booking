@@ -7,7 +7,7 @@ exports.create = async (req, res) => {
 };
 
 exports.findAll = async (req, res) => {
-    const cinema = await Cinema.find({});
+    const cinema = await Cinema.find({}).populate("Foods");
     return res.status(200).json(cinema);
 };
 
@@ -31,4 +31,21 @@ exports.updateSeatList = async (req, res) => {
     await cinema.save();
 
     return res.status(201).json(cinema);
+};
+
+exports.update = async (req, res) => {
+    const cinemaID = req.params.id;
+    const newCinema = req.body;
+    const result = await Cinema.findByIdAndUpdate(cinemaID, newCinema);
+
+    return res.status(200).json({ success: true });
+};
+
+exports.delete = async (req, res) => {
+    const cinemaID = req.params.id;
+    const cinema = await Cinema.findById(cinemaID);
+
+    await cinema.remove();
+
+    return res.status(200).json({ success: true });
 };

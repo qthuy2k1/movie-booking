@@ -12,7 +12,7 @@ router.route("/").get(movies.findAll).post(movies.create);
 
 router.route("/cinema").get(cinema.findAll).post(cinema.create);
 
-// router.route("/cinema/foods").get(foods.findAll).post(foods.create);
+router.route("/cinema/foods").get(foods.findAll).post(foods.create);
 
 // // router.route("/cinema/showtimes").get(showtimes.findAll).post(showtimes.create);
 
@@ -25,10 +25,14 @@ router.route("/cinema").get(cinema.findAll).post(cinema.create);
 // //     .get(seatnumber.findAll)
 // //     .post(seatnumber.create);
 
-// router.route("/cinema/foods/:id").get(foods.findOne);
+router.route("/cinema/foods/:id").get(foods.findOne);
 // // router.route("/cinema/showtimes/:id").get(showtimes.findOne);
 
-// router.route("/cinema/:id").get(cinema.findOne);
+router
+    .route("/cinema/:id")
+    .get(cinema.findOne)
+    .put(cinema.update)
+    .delete(cinema.delete);
 
 router
     .route("/:id")
