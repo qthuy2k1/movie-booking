@@ -9,6 +9,49 @@ const requireAuth = (to, from, next) => {
   else next();
 };
 
+// user role: Admin, employee, user
+
+// Authorize management page
+const requireEmployee = async (to, from, next) => {
+  const user = projectAuth.currentUser;
+  let roleUser = null;
+  try {
+    roleUser = await fetch(`http://localhost:3000/api/roles/${user.uid}`).then(
+      (response) =>
+        response.json().then((userRole) => {
+          return userRole.role;
+        })
+    );
+  } catch (err) {
+    roleUser = null;
+  }
+
+  if (roleUser == "user" || roleUser == null) {
+    next({ name: "SignIn", params: {} });
+  } else next();
+};
+// Authorize employee management page
+const requireAdmin = async (to, from, next) => {
+  const user = projectAuth.currentUser;
+  let roleUser = null;
+  try {
+    roleUser = await fetch(`http://localhost:3000/api/roles/${user.uid}`).then(
+      (response) =>
+        response.json().then((userRole) => {
+          return userRole.role;
+        })
+    );
+  } catch (err) {
+    roleUser = null;
+  }
+
+  if ((roleUser == "user") | (roleUser == null)) {
+    next({ name: "HomePage", params: {} });
+  } else if (roleUser == "employee") {
+    next({ name: "MovieManagement", params: {} });
+  } else next();
+};
+
 const routes = [
   {
     path: "/",
@@ -108,38 +151,16 @@ const routes = [
     path: "/admin/movie-management",
     name: "MovieManagement",
     component: () => import("../views/MovieManagement.vue"),
+    beforeEnter: requireEmployee,
     meta: {
       title: "Quản lý phim",
-    },
-  },
-  {
-    path: "/admin/cinema-management",
-    name: "CinemaManagement",
-    component: () => import("../views/CinemaManagement.vue"),
-    meta: {
-      title: "Quản lý rạp chiếu phim",
-    },
-  },
-  {
-    path: "/admin/employee-management",
-    name: "EmployeeManagement",
-    component: () => import("../views/EmployeeManagement.vue"),
-    meta: {
-      title: "Quản lý nhân viên",
-    },
-  },
-  {
-    path: "/admin/ticket-statistic",
-    name: "TicketStatistic",
-    component: () => import("../views/TicketStatistic.vue"),
-    meta: {
-      title: "Thống kê",
     },
   },
   {
     path: "/admin/movie-management/:id/edit",
     name: "MovieManagementEdit",
     component: () => import("../views/MovieManagementEdit.vue"),
+    beforeEnter: requireEmployee,
     meta: {
       title: "Chỉnh sửa thông tin phim",
     },
@@ -148,14 +169,25 @@ const routes = [
     path: "/admin/movie-management/create",
     name: "CreateMovieForm",
     component: () => import("../views/CreateMovieForm.vue"),
+    beforeEnter: requireEmployee,
     meta: {
       title: "Thêm phim mới",
+    },
+  },
+  {
+    path: "/admin/cinema-management",
+    name: "CinemaManagement",
+    component: () => import("../views/CinemaManagement.vue"),
+    beforeEnter: requireEmployee,
+    meta: {
+      title: "Quản lý rạp chiếu phim",
     },
   },
   {
     path: "/admin/cinema-management/:id/edit",
     name: "CinemaManagementEdit",
     component: () => import("../views/CinemaManagementEdit.vue"),
+    beforeEnter: requireEmployee,
     meta: {
       title: "Chỉnh sửa thông tin rạp chiếu phim",
     },
@@ -164,8 +196,45 @@ const routes = [
     path: "/admin/cinema-management/create",
     name: "CreateCinemaForm",
     component: () => import("../views/CreateCinemaForm.vue"),
+    beforeEnter: requireEmployee,
     meta: {
       title: "Thêm rạp chiếu phim mới",
+    },
+  },
+  {
+    path: "/admin/employee-management",
+    name: "EmployeeManagement",
+    component: () => import("../views/EmployeeManagement.vue"),
+    beforeEnter: requireAdmin,
+    meta: {
+      title: "Quản lý nhân viên",
+    },
+  },
+  {
+    path: "/admin/employee-management/:id/edit",
+    name: "EmployeeManagementEdit",
+    component: () => import("../views/EmployeeManagementEdit.vue"),
+    beforeEnter: requireAdmin,
+    meta: {
+      title: "Chỉnh sửa quyền của nhân viên",
+    },
+  },
+  {
+    path: "/admin/employee-management/create",
+    name: "CreateEmployeeForm",
+    component: () => import("../views/CreateEmployeeForm.vue"),
+    beforeEnter: requireAdmin,
+    meta: {
+      title: "Thêm nhân viên mới",
+    },
+  },
+  {
+    path: "/admin/ticket-statistic",
+    name: "TicketStatistic",
+    component: () => import("../views/TicketStatistic.vue"),
+    beforeEnter: requireEmployee,
+    meta: {
+      title: "Thống kê",
     },
   },
 ];
