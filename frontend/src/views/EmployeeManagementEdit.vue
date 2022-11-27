@@ -122,7 +122,11 @@ export default {
           body: JSON.stringify({
             role: employee.value.role,
           }),
-        });
+        })
+          .then((response) => response.json())
+          .then(() => {
+            msg.value = "Sửa quyền nhân viên thành công";
+          });
       } catch (err) {
         msg.value = err;
       } finally {

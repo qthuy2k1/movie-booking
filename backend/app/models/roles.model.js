@@ -5,9 +5,9 @@ const Schema = mongoose.Schema;
 const RolesSchema = new Schema(
     {
         _id: { type: String },
-        displayName: { type: String },
-        email: { type: String },
-        role: { type: String },
+        displayName: { type: String, required: true },
+        email: { type: String, required: true },
+        role: { type: String, required: true },
     },
     { _id: false }
 );

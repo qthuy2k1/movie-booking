@@ -2,12 +2,12 @@ body {
   font-family: 'Nunito', sans-serif;
 }
 
-.now-showing-slider .swiper {
+.movie-slider .swiper {
   width: 100%;
   height: 100%;
 }
 
-.now-showing-slider .swiper-slide img {
+.movie-slider .swiper-slide img {
   display: block;
   width: 100%;
   height: 300px;

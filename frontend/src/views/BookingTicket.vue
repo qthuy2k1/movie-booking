@@ -416,7 +416,7 @@ export default {
           console.log(err);
         }
       } else {
-        alert("Chọn ghế và phương thức thanh toán là tiền mặt");
+        alert("Chọn ghế và phương thức thanh toán tại quầy");
       }
     }
 

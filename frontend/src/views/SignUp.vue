@@ -18,6 +18,7 @@
           type="email"
           placeholder="Email"
           v-model="email"
+          required
         />
       </div>
 
@@ -26,6 +27,8 @@
           class="rounded-lg px-4 py-3 placeholder:italic bg-gray-100 focus:border-0 focus:outline-0 focus:bg-white focus:shadow-[0px_0px_10px_0px_rgba(0,0,0,0.1)] mb-2"
           type="text"
           placeholder="Tên người dùng"
+          minlength="3"
+          required
           v-model="fullname"
         />
       </div>
@@ -45,6 +48,8 @@
           type="password"
           placeholder="Mật khẩu"
           v-model="password"
+          minlength="6"
+          required
         />
       </div>
 

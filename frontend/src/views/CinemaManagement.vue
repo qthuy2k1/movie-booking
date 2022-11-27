@@ -99,14 +99,16 @@ export default {
       .then((data) => (cinemas.value = data));
 
     async function deleteCinema(cinemaId, index) {
-      await fetch(`http://localhost:3000/api/movies/cinema/${cinemaId}`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-      })
-        .then((response) => response.json())
-        .then(() => {
-          cinemas.value.splice(index, 1);
-        });
+      if (confirm("Bạn có chắc muốn xóa rạp chiếu phim này?")) {
+        await fetch(`http://localhost:3000/api/movies/cinema/${cinemaId}`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+        })
+          .then((response) => response.json())
+          .then(() => {
+            cinemas.value.splice(index, 1);
+          });
+      }
     }
 
     const resultQuery = computed(() => {

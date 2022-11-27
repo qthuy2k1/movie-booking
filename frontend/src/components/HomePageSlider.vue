@@ -6,6 +6,8 @@
       clickable: true,
     }"
     :modules="modules"
+    autoplay="true"
+    rewind="true"
     class="mySwiper"
   >
     <swiper-slide v-for="movie in movies" :key="movie._id" class="mt-5">
@@ -28,7 +30,7 @@ import "swiper/css/pagination";
 import "@/assets/css/global.css";
 
 // import required modules
-import { Pagination } from "swiper";
+import { Autoplay, Pagination } from "swiper";
 
 import { ref } from "vue";
 
@@ -37,17 +39,22 @@ export default {
     Swiper,
     SwiperSlide,
   },
-  setup() {
+  props: {
+    movieStatus: null,
+  },
+  setup(props) {
     const movies = ref([]);
 
     fetch(`http://localhost:3000/api/movies`)
       .then((response) => response.json())
       .then((data) => {
-        movies.value = data;
+        movies.value = data.filter((m) => {
+          return m.Status == props.movieStatus;
+        });
       });
 
     return {
-      modules: [Pagination],
+      modules: [Pagination, Autoplay],
       movies,
     };
   },

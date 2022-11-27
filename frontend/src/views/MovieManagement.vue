@@ -16,6 +16,7 @@
             Thêm phim mới +
           </router-link>
         </div>
+        <div v-if="msg" class="text-bold text-left text-red-500">{{ msg }}</div>
         <div class="mb-2 relative">
           <input
             class="w-1/2 h-10 border border-gray-600 rounded-md focus:outline-none px-2"
@@ -91,20 +92,24 @@ export default {
     const movies = ref([]);
     const searchQuery = ref(null);
     const { toLowerCaseNonAccentVietnamese } = nonAccentVietnamese();
+    const msg = ref(null);
 
     fetch(`http://localhost:3000/api/movies`)
       .then((response) => response.json())
       .then((data) => (movies.value = data));
 
     async function deleteMovie(movieId, index) {
-      await fetch(`http://localhost:3000/api/movies/${movieId}`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-      })
-        .then((response) => response.json())
-        .then(() => {
-          movies.value.splice(index, 1);
-        });
+      if (confirm("Bạn có chắc muốn xóa phim này?")) {
+        await fetch(`http://localhost:3000/api/movies/${movieId}`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+        })
+          .then((response) => response.json())
+          .then(() => {
+            movies.value.splice(index, 1);
+            msg.value = "Xóa phim thành công";
+          });
+      }
     }
 
     const resultQuery = computed(() => {
@@ -124,6 +129,7 @@ export default {
       resultQuery,
       searchQuery,
       deleteMovie,
+      msg,
     };
   },
 };

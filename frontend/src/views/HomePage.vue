@@ -19,9 +19,13 @@
     </swiper>
   </div>
 
-  <div class="now-showing-slider mt-14">
+  <div class="movie-slider mt-14">
     <h1 class="font-bold text-2xl">Phim đang chiếu</h1>
-    <home-page-slider></home-page-slider>
+    <home-page-slider movieStatus="Đang chiếu"></home-page-slider>
+  </div>
+  <div class="movie-slider mt-14">
+    <h1 class="font-bold text-2xl">Phim sắp chiếu</h1>
+    <home-page-slider movieStatus="Sắp chiếu"></home-page-slider>
   </div>
 </template>
 <script>

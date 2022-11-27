@@ -17,6 +17,7 @@
               >Tên phim</label
             >
             <input
+              required
               class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
               type="text"
               v-model="newMovie.Title"
@@ -31,6 +32,7 @@
               >Năm ra mắt</label
             >
             <input
+              required
               class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
               type="text"
               v-model="newMovie.Year"
@@ -45,6 +47,7 @@
               >Rated</label
             >
             <input
+              required
               class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
               type="text"
               v-model="newMovie.Rated"
@@ -59,6 +62,7 @@
               >Ngày, tháng ra mắt</label
             >
             <input
+              required
               class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
               type="text"
               v-model="newMovie.Released"
@@ -73,6 +77,7 @@
               >Thời lượng</label
             >
             <input
+              required
               class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
               type="text"
               v-model="newMovie.Runtime"
@@ -87,6 +92,7 @@
               >Thể loại</label
             >
             <input
+              required
               class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
               type="text"
               v-model="newMovie.Genres"
@@ -101,6 +107,7 @@
               >Đạo diễn</label
             >
             <input
+              required
               class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
               type="text"
               v-model="newMovie.Directors"
@@ -144,6 +151,7 @@
               >Ngôn ngữ</label
             >
             <input
+              required
               class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
               type="text"
               v-model="newMovie.Language"
@@ -158,6 +166,7 @@
               >Poster</label
             >
             <input
+              required
               class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
               type="text"
               v-model="newMovie.Poster"
@@ -172,6 +181,7 @@
               >Banner</label
             >
             <input
+              required
               class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
               type="text"
               v-model="newMovie.Banner"
@@ -186,6 +196,7 @@
               >Trailer</label
             >
             <input
+              required
               class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
               type="text"
               v-model="newMovie.Trailer"
@@ -196,11 +207,27 @@
           <div class="form-group mb-6">
             <label
               class="form-label inline-block mb-2 text-gray-700 font-bold"
+              for="status"
+              >Trạng thái</label
+            >
+            <select
+              class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+              v-model="newMovie.Status"
+              id="status"
+            >
+              <option value="Đang chiếu">Đang chiếu</option>
+              <option value="Sắp chiếu">Sắp chiếu</option>
+            </select>
+          </div>
+          <div class="form-group mb-6">
+            <label
+              class="form-label inline-block mb-2 text-gray-700 font-bold"
               for="cinema"
               >Chiếu tại rạp</label
             >
 
             <input
+              required
               class="form-control block w-full px-3 py-1.5 text-left font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:outline-none"
               value="Chọn các rạp"
               type="button"
@@ -213,6 +240,7 @@
               <ul>
                 <li v-for="cinema in cinemas" :key="cinema._id">
                   <input
+                    required
                     type="checkbox"
                     :id="cinema._id"
                     :value="cinema._id"

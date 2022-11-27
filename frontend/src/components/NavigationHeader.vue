@@ -29,6 +29,10 @@
             type="text"
             class="w-56 h-10 rounded-lg pl-4 pr-9"
             placeholder="Nhập để tìm kiếm..."
+            v-model="search"
+            @keyup.enter="
+              this.$router.push({ name: 'NowShowing', query: { search } })
+            "
           />
           <span class="absolute right-2 top-1/2 -translate-y-1/2"
             ><i class="fa-solid fa-magnifying-glass text-xl"></i
@@ -75,15 +79,26 @@
 <script>
 import { useUser } from "@/composables/useUser";
 import { useSignOut } from "@/composables/useSignOut";
+import { ref } from "vue";
 export default {
   setup() {
     const { getUser } = useUser();
     const { error, signOut } = useSignOut();
     const { user } = getUser();
+    const search = ref(null);
+
+    function movieSearch(event, value) {
+      if (event.code == "Enter") {
+        console.log(value);
+      }
+    }
+
     return {
       user,
       error,
       signOut,
+      movieSearch,
+      search,
     };
   },
 };

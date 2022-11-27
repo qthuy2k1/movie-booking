@@ -15,3 +15,9 @@ exports.findOne = async (req, res) => {
     const food = await Foods.findById(req.params.id);
     return res.status(200).json(food);
 };
+
+exports.delete = async (req, res) => {
+    const food = await Foods.findById(req.params.id);
+    food.remove();
+    return res.status(200).json(food);
+};

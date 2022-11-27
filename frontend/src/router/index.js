@@ -9,6 +9,12 @@ const requireAuth = (to, from, next) => {
   else next();
 };
 
+const getBackWhenSignedIn = (to, from, next) => {
+  const user = projectAuth.currentUser;
+  if (user) next({ name: "HomePage", params: {} });
+  else next();
+};
+
 // user role: Admin, employee, user
 
 // Authorize management page
@@ -102,6 +108,7 @@ const routes = [
     path: "/movies/:id/booking",
     name: "BookingTicket",
     component: () => import("../views/BookingTicket.vue"),
+    beforeEnter: requireAuth,
     props: true,
     meta: {
       title: "Đặt vé",
@@ -112,6 +119,7 @@ const routes = [
     path: "/sign-in",
     name: "SignIn",
     component: () => import("../views/SignIn.vue"),
+    beforeEnter: getBackWhenSignedIn,
     meta: {
       title: "Đăng nhập",
       isFullLayout: true,
@@ -121,6 +129,7 @@ const routes = [
     path: "/sign-up",
     name: "SignUp",
     component: () => import("../views/SignUp.vue"),
+    beforeEnter: getBackWhenSignedIn,
     meta: {
       title: "Đăng ký",
       isFullLayout: true,
@@ -145,6 +154,15 @@ const routes = [
     meta: {
       title: "Hóa đơn của bạn",
       isFullLayout: true,
+    },
+  },
+  {
+    path: "/admin",
+    name: "AdminSignIn",
+    component: () => import("../views/AdminSignIn.vue"),
+    beforeEnter: getBackWhenSignedIn,
+    meta: {
+      title: "Đăng nhập admin",
     },
   },
   {
@@ -229,12 +247,21 @@ const routes = [
     },
   },
   {
-    path: "/admin/ticket-statistic",
-    name: "TicketStatistic",
-    component: () => import("../views/TicketStatistic.vue"),
+    path: "/admin/orders-management",
+    name: "OrdersManagement",
+    component: () => import("../views/OrdersManagement.vue"),
     beforeEnter: requireEmployee,
     meta: {
-      title: "Thống kê",
+      title: "Quản lý hóa đơn",
+    },
+  },
+  {
+    path: "/admin/orders-paid",
+    name: "OrdersPaid",
+    component: () => import("../views/OrdersPaid.vue"),
+    beforeEnter: requireEmployee,
+    meta: {
+      title: "Hóa đơn đã thanh toán",
     },
   },
 ];

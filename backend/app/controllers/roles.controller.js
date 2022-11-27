@@ -1,4 +1,3 @@
-const { findByIdAndUpdate } = require("../models/roles.model");
 const Roles = require("../models/roles.model");
 
 exports.create = async (req, res) => {

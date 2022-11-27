@@ -16,6 +16,7 @@
             Thêm nhân viên +
           </router-link>
         </div>
+        <div class="text-left font-bold text-red-500">{{ msg }}</div>
         <div class="mb-2 relative">
           <input
             class="w-1/2 h-10 border border-gray-600 rounded-md focus:outline-none px-2"
@@ -90,6 +91,7 @@ export default {
     const employees = ref([]);
     const users = ref([]);
     const searchQuery = ref(null);
+    const msg = ref(null);
 
     users.value = await fetch(`http://localhost:3000/api/roles`)
       .then((response) => response.json())
@@ -102,17 +104,20 @@ export default {
     });
 
     async function deleteRole(userId, index) {
-      await fetch(`http://localhost:3000/api/roles/${userId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          role: "user",
-        }),
-      })
-        .then((response) => response.json())
-        .then(() => {
-          employees.value.splice(index, 1);
-        });
+      if (confirm("Bạn có chắc muốn xóa nhân viên này?")) {
+        await fetch(`http://localhost:3000/api/roles/${userId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            role: "user",
+          }),
+        })
+          .then((response) => response.json())
+          .then(() => {
+            employees.value.splice(index, 1);
+            msg.value = "Xóa quyền nhân viên thành công";
+          });
+      }
     }
 
     const resultQuery = computed(() => {
@@ -130,6 +135,7 @@ export default {
       deleteRole,
       resultQuery,
       searchQuery,
+      msg,
     };
   },
 };

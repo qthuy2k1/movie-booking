@@ -196,6 +196,21 @@
           <div class="form-group mb-6">
             <label
               class="form-label inline-block mb-2 text-gray-700 font-bold"
+              for="status"
+              >Trạng thái</label
+            >
+            <select
+              class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+              v-model="movie.Status"
+              id="status"
+            >
+              <option value="Đang chiếu">Đang chiếu</option>
+              <option value="Sắp chiếu">Sắp chiếu</option>
+            </select>
+          </div>
+          <div class="form-group mb-6">
+            <label
+              class="form-label inline-block mb-2 text-gray-700 font-bold"
               for="cinema"
               >Chiếu tại rạp</label
             >
@@ -218,7 +233,9 @@
                     :id="cinema._id"
                     :value="cinema"
                     v-model="cinemaSelected"
-                    :checked="cinema.checked ? 'checked' : null"
+                    :checked="
+                      cinemaSelected._id == cinema._id ? 'checked' : null
+                    "
                   />
                   <label :for="cinema._id">{{ cinema.Name }}</label>
                 </li>
@@ -252,13 +269,29 @@
                       type="checkbox"
                       :id="showtime.Date + showtime.Time"
                       :value="showtime.Date + ' ' + showtime.Time"
+                      v-if="
+                        showtime.MovieId == movie._id ||
+                        showtime.MovieId == null
+                      "
                       v-model="showTimeSelected"
-                      :checked="showtime.checked ? 'checked' : null"
-                      :disabled="showtime.Selected ? 'disabled' : null"
+                      :checked="
+                        showtime.MovieId == movie._id ? 'checked' : null
+                      "
                     />
-                    <label :for="showtime.Date + showtime.Time">{{
-                      showtime.Date + " - " + showtime.Time
-                    }}</label>
+                    <label
+                      v-if="
+                        showtime.MovieId == movie._id ||
+                        showtime.MovieId == null
+                      "
+                      :for="showtime.Date + showtime.Time"
+                      >{{
+                        showtime.Date +
+                        " - " +
+                        showtime.Time +
+                        " - " +
+                        cinema.Name
+                      }}</label
+                    >
                   </div>
                 </li>
               </ul>

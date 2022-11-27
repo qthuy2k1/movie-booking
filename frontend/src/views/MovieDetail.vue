@@ -34,6 +34,7 @@
           <p><strong>Ngôn ngữ:</strong> {{ movieDetail.Language }}</p>
           <p><strong>Rated:</strong> {{ movieDetail.Rated }}</p>
           <button
+            v-if="movieDetail.Status == 'Đang chiếu'"
             class="uppercase bg-blue-600 text-white font-semibold px-32 py-2 rounded-lg mt-3 text-lg hover:bg-blue-500"
             @click="
               this.$router.push({

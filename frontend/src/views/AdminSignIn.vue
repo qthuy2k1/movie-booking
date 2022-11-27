@@ -2,21 +2,12 @@
 <template>
   <form action="" class="px-96 mt-28" @submit.prevent="onSubmit">
     <h1 class="text-3xl font-bold text-center mb-2">ĐĂNG NHẬP</h1>
-    <h3 class="text-center">
-      Chưa có tài khoản?
-      <router-link
-        class="text-blue-500 underline hover:cursor-pointer"
-        to="/sign-up"
-        >Đăng ký ngay</router-link
-      >
-    </h3>
     <div class="mt-8">
       <div class="flex flex-col mt-2">
         <input
           class="rounded-lg px-4 py-3 placeholder:italic bg-gray-100 focus:border-0 focus:outline-0 focus:bg-white focus:shadow-[0px_0px_10px_0px_rgba(0,0,0,0.1)] mb-2"
           type="email"
           placeholder="Email"
-          required
           v-model="email"
         />
       </div>
@@ -26,8 +17,6 @@
           class="rounded-lg px-4 py-3 placeholder:italic bg-gray-100 focus:border-0 focus:outline-0 focus:bg-white focus:shadow-[0px_0px_10px_0px_rgba(0,0,0,0.1)]"
           type="password"
           placeholder="Mật khẩu"
-          minlength="6"
-          required
           v-model="password"
         />
       </div>
@@ -72,6 +61,7 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useSignIn } from "@/composables/useSignIn";
+import { projectAuth } from "@/configs/firebase";
 export default {
   setup() {
     const { error, isPending, signIn } = useSignIn();
@@ -83,8 +73,21 @@ export default {
 
     async function onSubmit() {
       await signIn(email.value, password.value);
+      const user = projectAuth.currentUser;
+      let roleUser = null;
+      roleUser = await fetch(
+        `http://localhost:3000/api/roles/${user.uid}`
+      ).then((response) =>
+        response.json().then((userRole) => {
+          return userRole.role;
+        })
+      );
       if (!error.value) {
-        router.push({ name: "HomePage", params: {} });
+        if (roleUser != "user") {
+          router.push({ name: "MovieManagement", params: {} });
+        } else {
+          router.push({ name: "HomePage", params: {} });
+        }
       }
     }
 

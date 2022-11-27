@@ -41,12 +41,12 @@
       </li>
       <li
         class="border-b-2 border-gray-300 cursor-pointer flex justify-between items-center"
-        :class="dashboard == 'ticket' ? 'bg-blue-600' : null"
+        :class="dashboard == 'orders' ? 'bg-blue-600' : null"
       >
         <router-link
-          to="/admin/ticket-statistic"
+          to="/admin/orders-management"
           class="block px-4 py-4 hover:bg-blue-600 w-full"
-          >Thống kê vé</router-link
+          >Quản lý hóa đơn</router-link
         >
         <i class="fa-solid fa-chevron-right right-4 absolute"></i>
       </li>
