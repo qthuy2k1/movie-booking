@@ -47,12 +47,12 @@
             </div>
 
             <div class="flex justify-end">
-              <div
+              <button
                 class="bg-blue-500 text-white px-4 py-2 rounded-lg mt-4 hover:bg-blue-600"
-                @click="updateUserProfile(fullname, phoneNumber)"
+                @click.prevent="updateUserProfile(fullname, phoneNumber)"
               >
                 Lưu
-              </div>
+              </button>
             </div>
           </div>
         </form>
@@ -75,6 +75,16 @@ export default {
     const { user } = getUser();
     const fullname = ref(user.value.displayName);
     const phoneNumber = ref(user.value.phoneNumber);
+
+    fetch(`http://localhost:3000/api/roles/${user.value.uid}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        displayName: fullname.value,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data));
 
     return {
       user,
